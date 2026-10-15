@@ -82,6 +82,19 @@ the kind of noise real business documents carry.
 - **Annotations, drawn as if by hand:** on bank statements, handwritten margin notes and totals, ink ticks
   against rows and highlighter over transactions; on invoices, a "PAID" stamp.
 
+**Examples** (every business, person and value is invented):
+
+![An invoice, plain and cluttered](stage1_charts/example_invoice_plain_vs_cluttered.png)
+
+The cluttered invoice adds a logo, a tagline, a postal address, a phone line, a client number and principal,
+a "Services to" date beside the invoice date, payment details, an "Amount paid" line beside the total, and a
+rotated "PAID" stamp, all of which a parser must read and place in order.
+
+![A receipt, plain, cluttered and photographed](stage1_charts/example_receipt_three_forms.png)
+
+The cluttered receipt adds a phone number, a website and returns lines; the photographed set shows that
+cluttered receipt shot at an angle on a desk, the moderate of three severity levels.
+
 **How much more is on the page** (average per page):
 
 | | Plain | With distractors |

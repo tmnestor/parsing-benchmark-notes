@@ -2,8 +2,6 @@
 
 MinerU, Docling and Marker: generative AI, stage 1 results, and what to expect from native PDFs.
 
-Notes for the meeting, 15 October 2026.
-
 ## Is MinerU pipeline generative AI?
 
 Generally no. MinerU pipeline is conventional machine learning, not generative AI in the usual sense. MinerU VLM

@@ -95,6 +95,15 @@ rotated "PAID" stamp, all of which a parser must read and place in order.
 The cluttered receipt adds a phone number, a website and returns lines; the photographed set shows that
 cluttered receipt shot at an angle on a desk, the moderate of three severity levels.
 
+![A bank statement, plain and cluttered](stage1_charts/example_bank_statement_plain_vs_cluttered.png)
+
+The cluttered statement carries the annotations only bank statements get, drawn as if by hand: highlighter over
+five transactions, red circles round their amounts, a tick in the margin, a handwritten note ("tools") beside a
+row and a handwritten running total ("= 1676.32"). A parser must read the printed rows through the
+highlighting, and either transcribe or ignore the handwriting without mixing it into the table. The account
+holder, merchants and values are invented; the bank's name is real, since each statement layout imitates a real
+Australian bank's.
+
 **How much more is on the page** (average per page):
 
 | | Plain | With distractors |

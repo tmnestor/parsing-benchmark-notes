@@ -1,4 +1,6 @@
-# MinerU and Docling: Generative AI, Stage 1 Results, and Native PDFs
+# Parsing Benchmark Notes
+
+MinerU, Docling and Marker: generative AI, stage 1 results, and what to expect from native PDFs.
 
 Notes for the meeting, 15 October 2026.
 
@@ -65,6 +67,42 @@ Two points for the discussion:
 the LF AI & Data Foundation, licensed MIT. Its standard pipeline is, like MinerU pipeline, a chain of
 specialised models rather than a generative one: a layout model, a table model (TableFormer) and OCR
 (RapidOCR). It is not generative AI. It ran at 5 to 12 seconds a page on the same laptop.
+
+## What "cluttered pages" means
+
+"Cluttered pages" is shorthand for the **distractor set** (and the labelled_varied set built on it): the same
+165 documents as the plain set, with extra content drawn on that a reader must not mistake for the real fields,
+the kind of noise real business documents carry.
+
+**What gets added** (all invented, and checked never to equal a real field value):
+
+- **Near-miss values:** an ACN printed beside the ABN, a due date beside the invoice date, a store or branch
+  number, other amounts that look like totals.
+- **Extra printed text:** reference numbers, contact lines, notes.
+- **Annotations, drawn as if by hand:** on bank statements, handwritten margin notes and totals, ink ticks
+  against rows and highlighter over transactions; on invoices, a "PAID" stamp.
+
+**How much more is on the page** (average per page):
+
+| | Plain | With distractors |
+|---|---|---|
+| Invoice | 12 blocks, about 220 characters | 37 blocks, about 930 characters |
+| Receipt | 24 blocks | 30 blocks |
+| Bank statement | 7 blocks | 10 blocks |
+
+**Why it exists:** comparing plain with distractor pages shows how much clutter costs each tool. For parsing,
+every added item is real text the tool must transcribe and place in the right reading order, so a busier page is
+harder to read in full. (For the extraction benchmark the set was first built for, the point was to tempt a
+model into picking the wrong value.)
+
+**What stage 1 showed:**
+
+- **Text accuracy barely suffered,** and for MinerU pipeline, Docling and Marker it slightly improved: the extra
+  text is mostly clean printed lines, easy to read, which dilute the hard parts.
+- **Reading order got worse for the two best readers,** MinerU VLM (0.284 to 0.346) and Docling (0.297 to
+  0.368): more blocks mean more chances to put them in the wrong order. It barely moved for MinerU pipeline and
+  Marker, whose reading order was already weak.
+- **Docling handled the clutter best on text** (0.255 against MinerU VLM's 0.269).
 
 ## Stage 1 at a glance
 

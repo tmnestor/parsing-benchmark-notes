@@ -1,6 +1,6 @@
 # Parsing Benchmark Notes
 
-MinerU, Docling and Marker: generative AI, stage 1 results, and what to expect from native PDFs.
+MinerU, Docling and Marker: generative AI, stage 1 results on images, and stage 2 results on native PDFs.
 
 ## Is MinerU pipeline generative AI?
 
@@ -174,17 +174,49 @@ What it shows:
   to 11 times faster than MinerU VLM depending on the set.
 - On photographed receipts none of the three reads tables usefully (TEDS 0.03 to 0.12).
 
-## MinerU on native PDFs: what to expect from stage 2
+## Stage 2: native PDFs, what we found
 
-The two back-ends behave differently with PDFs, and that is one of the most interesting results to expect:
+About half the documents received are native PDFs (files with a text layer, not scans), mostly the same kinds
+as stage 1's. Stage 2 typeset the same 165 documents as native PDFs, plain and cluttered (330 pages), and scored
+the tools on them on 16 October 2026. Marker was not run on PDFs (dropped for stage 2; its stage 1 image
+results stand). A new entry, the **text layer**, simply reads the text the PDF already contains, with no model.
 
-- **MinerU pipeline** reads the PDF's text layer directly, so it skips OCR. Its weak spot in stage 1 was reading
-  text from images (text edit distance 0.637 on plain pages), so it may improve a lot.
-- **MinerU VLM** always turns the page into an image and looks at it, even when given a PDF. Its PDF and image
-  scores should be nearly the same, which is why the leaderboard will note it.
-- **Docling** also reads a native PDF's text layer rather than running OCR, so, like the pipeline, it should
-  gain on text; its table handling is the open question.
+**Scores on native PDFs** (plain / cluttered)
 
-So native PDFs could narrow the gap between the two MinerU back-ends, or even reverse it, in which case the fast
-pipeline (3 to 9 seconds a page) would be the better choice for native PDFs. That is the routing question stage
-2 is built to answer.
+| Tool | Text edit distance (lower is better) | Table TEDS (higher is better) | Reading order (lower is better) |
+|---|---|---|---|
+| **Text layer (no model)** | **0.009 / 0.051** | 0.000 (no tables) | **0.105 / 0.099** |
+| MinerU VLM | 0.253 / 0.282 | **0.598 / 0.492** | 0.315 / 0.365 |
+| Docling | 0.333 / 0.262 | 0.492 / 0.461 | 0.353 / 0.376 |
+| MinerU pipeline | 0.619 / 0.528 | 0.471 / 0.428 | 0.635 / 0.570 |
+
+What it shows, on these synthetic documents:
+
+- **For text and reading order, reading the text layer beats every model by a wide margin:** almost perfect text
+  (0.009 on plain pages), in under a second for all 165 pages, on no GPU.
+- **The text layer gives no table structure.** For tables, MinerU VLM is best, then Docling, then MinerU pipeline.
+- **So a native PDF is best routed to the text layer for text and reading order, and to a table model (MinerU
+  VLM) where table structure matters.** Scans and photos still need a full parser.
+
+**Table gains from a native PDF over an image** (each tool's PDF score against its stage 1 image score; TEDS,
+plain / cluttered; positive means the PDF helped)
+
+| Tool | Table TEDS gain |
+|---|---|
+| Docling | +0.068 / +0.011 |
+| MinerU pipeline | +0.012 / +0.030 |
+| MinerU VLM | -0.003 / -0.024 |
+
+Text gains are deliberately not reported. A control run (Docling on images of the stage 2 pages) showed the new
+rendering alone moves text scores by 0.028, more than the 0.02 allowed, so a text gain would mix the change of
+rendering with the change of input. Table scores moved less (0.019), within the allowance; even so, Docling's
+true table gain may be nearer +0.05.
+
+**How the earlier expectations held up:**
+
+- **MinerU pipeline did not close the gap.** It does read the PDF's text layer (OCR switched off), yet still
+  scores 0.619 on text against the text layer's 0.009, which suggests its layout step, not character reading,
+  limits it. The fast pipeline is not the answer for native PDFs; the text layer is.
+- **MinerU VLM behaved as expected:** it turns the PDF into an image and reads that, so its table scores barely
+  moved (-0.003 on plain pages). It remains the best table reader.
+- **Docling gained most on tables** (+0.068 on plain pages), as it reads the PDF's own text cells.
